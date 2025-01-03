@@ -118,22 +118,3 @@ func (h *ExternalTokenHelper) cmd(op string) (*exec.Cmd, error) {
 	return cmd, nil
 }
 
-func execScript(script string) (*exec.Cmd, error) {
-	var shell, flag string
-	if runtime.GOOS == "windows" {
-		shell = "cmd"
-		flag = "/C"
-	} else {
-		shell = "/bin/sh"
-		flag = "-c"
-	}
-	if other := os.Getenv("SHELL"); other != "" {
-		// fix git-bash of windows, issue: failed to get token from token helper: "/C: /C: Is a directory\n": exit status 1
-		if strings.HasSuffix(other, "sh") || strings.HasSuffix(other, "sh.exe") {
-			flag = "-c"
-		}
-		shell = other
-	}
-	cmd := exec.Command(shell, flag, script)
-	return cmd, nil
-}
